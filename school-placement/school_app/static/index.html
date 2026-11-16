@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Оценка вариантов размещения школ</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="eyebrow"><span id="dataset-name">Практика 2</span> · BlocksNet 1.0.0a9 · <span id="territory">Высоцкое городское поселение</span></div>
+    <h1>Оценка вариантов размещения школ</h1>
+    <p class="lead">
+      Приложение сравнивает обеспеченность населения местами в общеобразовательных организациях (школах)
+      для разных вариантов размещения новых школ по кварталам. Выбор земельного участка и оценка
+      возможности строительства требуют отдельного градостроительного обоснования.
+    </p>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="loading" class="alert">Загрузка сохранённых данных и проверка исходного расчёта…</div>
+  <div id="load-error" class="alert alert-error hidden" role="alert"></div>
+  <div id="validation" class="alert hidden" role="status"></div>
+
+  <section id="summary" class="summary" aria-label="Итоговые показатели"></section>
+  <div id="view-label" class="view-label"></div>
+
+  <section class="workspace">
+    <div class="panel map-panel">
+      <div class="panel-head">
+        <h2>Карта кварталов</h2>
+        <div class="segmented" id="map-modes" role="group" aria-label="Режим карты">
+          <button type="button" data-mode="base" class="active">Исходное состояние</button>
+          <button type="button" data-mode="scenario">Сценарий</button>
+          <button type="button" data-mode="change">Изменение</button>
+        </div>
+      </div>
+      <div class="map-tools">
+        <span id="mode-hint" class="muted"></span>
+        <span class="zoom">
+          <button type="button" class="btn btn-small" id="zoom-in" title="Приблизить">+</button>
+          <button type="button" class="btn btn-small" id="zoom-out" title="Отдалить">−</button>
+          <button type="button" class="btn btn-small" id="zoom-reset">Весь район</button>
+        </span>
+      </div>
+      <div class="map-wrap" id="map-wrap">
+        <svg id="map" role="img" aria-label="Схема кварталов"></svg>
+        <div id="tooltip" class="tooltip hidden"></div>
+      </div>
+      <div id="legend" class="legend"></div>
+      <p class="note">
+        Нажмите на квартал, чтобы открыть карточку и выбрать его для размещения школы. Колесо мыши — масштаб,
+        перетаскивание — сдвиг. Номера — идентификаторы кварталов <code>_id</code> набора данных.
+        Схема построена по контурам кварталов без подложки, приложение работает без интернета.
+      </p>
+    </div>
+
+    <aside class="side">
+      <section class="panel" id="card">
+        <div class="panel-head"><h2>Карточка квартала</h2></div>
+        <div id="card-body" class="muted">Выберите квартал на карте или в таблице.</div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Сценарий размещения</h2><span id="draft-status" class="badge">нет школ</span></div>
+        <p class="note">Выберите квартал и число мест. В одном сценарии можно разместить школы в нескольких кварталах.</p>
+        <form id="draft-form" class="form-row" novalidate>
+          <label class="field grow"><span>Квартал</span><select id="draft-block"></select></label>
+          <label class="field"><span>Вместимость, мест</span>
+            <input id="draft-capacity" type="text" inputmode="numeric" value="600" autocomplete="off"></label>
+          <button type="submit" class="btn">Добавить школу</button>
+        </form>
+        <div id="draft-error" class="inline-error hidden" role="alert"></div>
+        <ul id="draft-list" class="placement-list"></ul>
+        <div class="button-row">
+          <button type="button" id="calc" class="btn btn-primary">Рассчитать сценарий</button>
+          <button type="button" id="reset" class="btn btn-ghost">Сбросить изменения</button>
+        </div>
+        <div class="button-row">
+          <input id="save-name" type="text" maxlength="80" placeholder="Название сценария">
+          <button type="button" id="save" class="btn">Сохранить для сравнения</button>
+        </div>
+        <div id="draft-message" class="inline-message hidden" role="status"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Автоматический подбор квартала</h2><span id="auto-status" class="badge">не запускался</span></div>
+        <p class="note">
+          Для одной школы по очереди проверяются все кварталы. Каждый вариант считается от исходной сети школ
+          независимо от текущего сценария. Новая школа может обслуживать соседние кварталы, поэтому поиск не
+          ограничен кварталом с наибольшим собственным дефицитом.
+        </p>
+        <form id="auto-form" class="form-row" novalidate>
+          <label class="field grow"><span>Вместимость новой школы, мест</span>
+            <input id="auto-capacity" type="text" inputmode="numeric" value="600" autocomplete="off"></label>
+          <button type="submit" class="btn btn-primary" id="auto-start">Разместить автоматически</button>
+        </form>
+        <div id="auto-error" class="inline-error hidden" role="alert"></div>
+        <div id="auto-progress" class="progress hidden">
+          <div class="progress-head"><span id="auto-progress-text"></span><span id="auto-elapsed"></span></div>
+          <div class="progress-track"><div id="auto-bar" class="progress-bar"></div></div>
+          <button type="button" id="auto-cancel" class="btn btn-small btn-ghost">Остановить</button>
+        </div>
+        <div id="auto-message" class="inline-message hidden" role="status"></div>
+      </section>
+    </aside>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Сравнение трёх вариантов размещения</h2>
+        <p class="note">
+          Все три варианта добавляют в сеть одинаковое число мест: A — одна школа, B — две школы,
+          C — одна школа в квартале, найденном автоподбором. Каждый вариант считается от исходной сети школ.
+          Квартал можно выбрать в списке или кнопкой в карточке квартала.
+        </p>
+      </div>
+      <div class="button-row">
+        <button type="button" id="variants-calc-all" class="btn btn-primary">Рассчитать A, B и C</button>
+        <button type="button" id="variants-save" class="btn">Сохранить A, B, C для сравнения</button>
+      </div>
+    </div>
+    <div class="variant-capacity">
+      <form id="vtotal-form" class="form-row" novalidate>
+        <label class="field"><span>Вместимость новых школ в каждом варианте, мест</span>
+          <input id="vtotal" type="text" inputmode="numeric" value="600" autocomplete="off"></label>
+        <button type="button" class="btn btn-small" id="vtotal-task">600 мест (как в задании)</button>
+        <button type="button" class="btn btn-small" id="vtotal-deficit">По исходному дефициту</button>
+      </form>
+      <div id="vtotal-hint" class="note"></div>
+      <div id="vtotal-error" class="inline-error hidden" role="alert"></div>
+    </div>
+    <div class="variants">
+      <article class="variant">
+        <h3><span class="letter">A</span> Одна школа, <span class="va-cap">600 мест</span></h3>
+        <label class="field"><span>Квартал</span><select id="va-block"></select></label>
+        <div class="button-row">
+          <button type="button" class="btn btn-primary btn-small" id="va-calc">Рассчитать A</button>
+          <button type="button" class="btn btn-small" id="va-show" disabled>На карте</button>
+        </div>
+        <div id="va-result" class="variant-result muted">Не рассчитан.</div>
+      </article>
+      <article class="variant">
+        <h3><span class="letter">B</span> Две школы: <span class="vb-cap">300 + 300 мест</span></h3>
+        <div class="two">
+          <label class="field"><span>Квартал 1</span><select id="vb-block1"></select></label>
+          <label class="field"><span>Квартал 2</span><select id="vb-block2"></select></label>
+          <label class="field"><span>Школа 1, мест</span><input id="vb-cap1" type="text" inputmode="numeric" value="300" autocomplete="off"></label>
+          <label class="field"><span>Школа 2, мест</span><input id="vb-cap2" type="text" inputmode="numeric" value="300" autocomplete="off"></label>
+        </div>
+        <p class="note">По умолчанию вместимость делится поровну; её можно изменить вручную, сумма должна совпадать с вместимостью варианта.</p>
+        <div class="button-row">
+          <button type="button" class="btn btn-primary btn-small" id="vb-calc">Рассчитать B</button>
+          <button type="button" class="btn btn-small" id="vb-show" disabled>На карте</button>
+        </div>
+        <div id="vb-result" class="variant-result muted">Не рассчитан.</div>
+      </article>
+      <article class="variant">
+        <h3><span class="letter">C</span> Одна школа, <span class="va-cap">600 мест</span>, автоподбор</h3>
+        <label class="field"><span>Квартал (определяется перебором)</span><select id="vc-block" disabled><option>—</option></select></label>
+        <div class="button-row">
+          <button type="button" class="btn btn-primary btn-small" id="vc-calc">Подобрать и рассчитать C</button>
+          <button type="button" class="btn btn-small" id="vc-show" disabled>На карте</button>
+        </div>
+        <div id="vc-result" class="variant-result muted">Не рассчитан.</div>
+      </article>
+    </div>
+    <div class="table-scroll">
+      <table class="data-table" id="variants-table">
+        <thead><tr>
+          <th>Вариант</th><th>Размещение</th><th>Прирост вместимости сети, мест</th>
+          <th>Вместимость сети, мест</th><th>Остаточный дефицит, мест</th><th>Сокращение дефицита, мест</th>
+          <th>Обеспеченность, %</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Варианты автоматического подбора</h2>
+        <p class="note">По убыванию сокращения суммарного дефицита мест. Нажмите на строку, чтобы показать сценарий на карте.</p>
+      </div>
+      <button type="button" id="auto-export" class="btn" disabled>Экспорт CSV</button>
+    </div>
+    <div id="auto-errors" class="inline-error hidden" role="alert"></div>
+    <div class="table-scroll tall">
+      <table class="data-table clickable" id="auto-table">
+        <thead><tr>
+          <th>Место</th><th>Квартал</th><th>Землепользование</th><th>Население, чел.</th>
+          <th>Вместимость школ квартала, мест</th><th>Дефицит квартала исходный, мест</th>
+          <th>Остаточный дефицит на территории, мест</th><th>Сокращение дефицита, мест</th>
+          <th>Обеспеченность, %</th><th>Статус</th>
+        </tr></thead>
+        <tbody><tr><td colspan="10" class="muted">Автоподбор ещё не запускался.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Сохранённые сценарии</h2>
+        <p class="note">Хранятся в этом браузере. Строка «Исходное состояние» — для сравнения.</p>
+      </div>
+      <div class="button-row">
+        <button type="button" id="saved-export" class="btn" disabled>Экспорт CSV</button>
+        <button type="button" id="saved-clear" class="btn btn-ghost" disabled>Удалить все</button>
+      </div>
+    </div>
+    <div class="table-scroll">
+      <table class="data-table" id="saved-table">
+        <thead><tr>
+          <th>Сценарий</th><th>Размещение</th><th>Прирост вместимости сети, мест</th>
+          <th>Остаточный дефицит, мест</th><th>Сокращение дефицита, мест</th><th>Обеспеченность, %</th>
+          <th>Изменение, п.п.</th><th></th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Результаты по кварталам</h2>
+        <p class="note" id="blocks-note"></p>
+      </div>
+      <button type="button" id="blocks-export" class="btn">Экспорт CSV</button>
+    </div>
+    <div class="table-tools">
+      <input id="blocks-filter" type="search" placeholder="Номер квартала или землепользование">
+      <label class="check"><input id="blocks-relevant" type="checkbox" checked> только кварталы с населением, школами или изменениями</label>
+      <span id="blocks-count" class="muted"></span>
+    </div>
+    <div class="table-scroll tall">
+      <table class="data-table clickable sortable" id="blocks-table">
+        <thead><tr>
+          <th data-key="id">№</th>
+          <th data-key="land_use_label">Землепользование</th>
+          <th data-key="population">Население, чел.</th>
+          <th data-key="demand_places">Потребность, мест</th>
+          <th data-key="base_capacity">Вместимость исходная, мест</th>
+          <th data-key="added_capacity">Новые места</th>
+          <th data-key="scenario_capacity">Вместимость в сценарии, мест</th>
+          <th data-key="base_provision">Обеспеченность исходная, %</th>
+          <th data-key="scenario_provision">Обеспеченность в сценарии, %</th>
+          <th data-key="provision_change_pp">Изменение, п.п.</th>
+          <th data-key="base_deficit_places">Дефицит исходный, мест</th>
+          <th data-key="scenario_deficit_places">Дефицит в сценарии, мест</th>
+          <th data-key="deficit_reduction_places">Сокращение дефицита, мест</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Метод, источники данных и допущения</h2>
+    <p>
+      Используется тот же расчёт, что в практике 2: функция <code>competitive_provision</code> BlocksNet 1.0.0a9,
+      пешеходная матрица времени в пути, радиус доступности <b id="m-acc">15</b> минут и норматив
+      <b id="m-dem">120</b> мест на 1000 жителей. Потребность квартала —
+      <code>ceil(население / 1000 × норматив)</code>. Сначала потребность закрывается школами самого квартала,
+      затем свободные места распределяются между кварталами в пределах радиуса с учётом конкуренции за места.
+      <b>Дефицит мест</b> — неудовлетворённая расчётная потребность с учётом вместимости школ и территориальной
+      доступности, а не разность «потребность − вместимость». <b>Обеспеченность</b> — доля потребности,
+      закрытая доступными местами.
+    </p>
+    <div id="method-check" class="method-check"></div>
+    <h3>Источники данных</h3>
+    <ul id="sources"></ul>
+    <h3>Допущения и ограничения</h3>
+    <ul id="assumptions"></ul>
+    <details><summary>Файлы и контрольные суммы</summary><div id="files" class="files"></div></details>
+  </section>
+</main>
+
+<footer class="wrap footer">
+  Учебное приложение к практике 2. Работает локально на сохранённых данных: без повторного скачивания
+  данных города, платных сервисов и языковых моделей.
+</footer>
+<div id="toasts" class="toasts" aria-live="polite"></div>
+<script src="/static/app.js"></script>
+</body>
+</html>

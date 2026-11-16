@@ -1,0 +1,59 @@
+{
+  "title": "Оценка вариантов размещения школ",
+  "territory": "Высоцкое городское поселение, Ленинградская область",
+  "source_project": "C:\\Users\\harlekiro\\python-package-boilerplate\\examples\\vysotsk",
+  "data_version": "2",
+  "prepared_at": "2026-11-02T21:48:16+00:00",
+  "block_count": 255,
+  "populated_blocks": 24,
+  "total_population": 1403.0,
+  "total_capacity_places": 250,
+  "saved_provision_total": 0.486,
+  "saved_provision_weak_total": 0.486,
+  "saved_provision_report": {
+    "сервис": "school",
+    "название": "школа",
+    "граф": "walk",
+    "радиус, мин": 15,
+    "норматив на 1000 жителей": 120,
+    "обеспеченность (сильная)": 0.486,
+    "обеспеченность (слабая)": 0.486,
+    "связей": 18
+  },
+  "matrix": {
+    "rows": 255,
+    "columns": 255,
+    "reordered": false,
+    "min_minutes": 0.0,
+    "max_minutes": 233.625,
+    "diagonal_zero": 255,
+    "has_nan": false,
+    "ids_match_blocks": true
+  },
+  "source_files": {
+    "blocks_summary": "C:\\Users\\harlekiro\\python-package-boilerplate\\examples\\vysotsk\\data\\results\\vysotsk_blocks_summary.geojson",
+    "accessibility_matrix_walk": "C:\\Users\\harlekiro\\python-package-boilerplate\\examples\\vysotsk\\data\\accessibility_matrix_walk.parquet",
+    "provision_report": "C:\\Users\\harlekiro\\python-package-boilerplate\\examples\\vysotsk\\data\\results\\provision_report.csv",
+    "provision_links": "C:\\Users\\harlekiro\\python-package-boilerplate\\examples\\vysotsk\\data\\results\\provision_links.parquet"
+  },
+  "source_hashes": {
+    "blocks_summary": "045b229fe31b983d9e747aab2cc2ec27fdad7c51748df5a01da2af264be147c7",
+    "accessibility_matrix_walk": "4e3a50432e564b927ef21429cbfebcfb4d354ed348f6faf88f7b29e27b2e6f7b",
+    "provision_report": "a5ec2f338190d927e62d73aa37e44b3fcd3def3051973bee761803040448c51b",
+    "provision_links": "5e22edebd37f997665d26d240598f598d6225909d63af6589934182c3fbdb487"
+  },
+  "saved_school_links": 18,
+  "svg": {
+    "width": 1000.0,
+    "height": 1111.4,
+    "simplify_m": 6.0
+  },
+  "crs": {
+    "source": "EPSG:4326",
+    "metric": "EPSG:32635"
+  },
+  "provision_mode": "walk",
+  "dataset": {
+    "name": "Данные практики 2 (OpenStreetMap + BlocksNet)"
+  }
+}

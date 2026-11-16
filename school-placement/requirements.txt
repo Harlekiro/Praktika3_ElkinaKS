@@ -1,0 +1,10 @@
+# Та же версия BlocksNet, что в практике 2 (examples/vysotsk).
+blocksnet==1.0.0a9
+pandas>=2.2,<3
+numpy>=1.26
+pyarrow>=14
+loguru>=0.7
+# только для tools/prepare_data.py
+geopandas>=1.0
+# только для тестов
+pytest>=8

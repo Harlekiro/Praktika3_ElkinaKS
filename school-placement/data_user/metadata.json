@@ -1,0 +1,91 @@
+{
+  "title": "Оценка вариантов размещения школ",
+  "territory": "Высоцкое городское поселение, Ленинградская область",
+  "source_project": "C:\\Users\\harlekiro\\python-package-boilerplate\\school-placement\\sources\\user_vysotsk",
+  "data_version": "user-1",
+  "prepared_at": "2026-11-02T22:06:50+00:00",
+  "block_count": 473,
+  "populated_blocks": 56,
+  "total_population": 1135.0,
+  "total_capacity_places": 340,
+  "saved_provision_total": 0.862,
+  "saved_provision_weak_total": 0.862,
+  "saved_provision_report": {
+    "сервис": "school",
+    "название": "школа",
+    "граф": "walk",
+    "радиус, мин": 15,
+    "норматив на 1000 жителей": 120,
+    "обеспеченность (сильная)": 0.862,
+    "обеспеченность (слабая)": 0.862,
+    "связей": 40
+  },
+  "matrix": {
+    "rows": 473,
+    "columns": 473,
+    "reordered": false,
+    "min_minutes": 0.0,
+    "max_minutes": 213.5,
+    "diagonal_zero": 473,
+    "has_nan": false,
+    "ids_match_blocks": true
+  },
+  "source_files": {
+    "blocks_summary": "C:\\Users\\harlekiro\\python-package-boilerplate\\school-placement\\sources\\user_vysotsk\\data\\results\\vysotsk_blocks_summary.geojson",
+    "accessibility_matrix_walk": "C:\\Users\\harlekiro\\python-package-boilerplate\\school-placement\\sources\\user_vysotsk\\data\\accessibility_matrix_walk.parquet",
+    "provision_report": "C:\\Users\\harlekiro\\python-package-boilerplate\\school-placement\\sources\\user_vysotsk\\data\\results\\provision_report.csv",
+    "provision_links": "C:\\Users\\harlekiro\\python-package-boilerplate\\school-placement\\sources\\user_vysotsk\\data\\results\\provision_links.parquet"
+  },
+  "source_hashes": {
+    "blocks_summary": "e091bdae17023f476fa0267a15cb0f69aa5eebaa0377dc640c6b66a564b73f18",
+    "accessibility_matrix_walk": "a6bd930ece2fc847d4a13e510a3bb30b14dad61d47bef7716885d32552b9cc8e",
+    "provision_report": "2cde015f001e97e81c092f936a2c12038ad2a8b504930e9988841777f9a081e1",
+    "provision_links": "332648412eb380eacfe50f79dc85fca65346d45642036d38a97367391e7d9b98"
+  },
+  "saved_school_links": 40,
+  "svg": {
+    "width": 1000.0,
+    "height": 1800.0,
+    "simplify_m": 6.0
+  },
+  "crs": {
+    "source": "EPSG:4326",
+    "metric": "EPSG:32635"
+  },
+  "provision_mode": "walk",
+  "dataset": {
+    "name": "Собственный набор данных по Высоцку",
+    "territory": "Высоцкое городское поселение, Ленинградская область",
+    "source_folder": "D:\\иду лекции\\Данные по Высоцку\\Высоцкое городское поселение-20261102T213450Z-1-001\\Высоцкое городское поселение",
+    "built_at": "2026-11-02T22:06:47+00:00",
+    "input_hashes": {
+      "blocks": "6e5346dd6f61d962a4705c9e8e6863485ef2fa9d14bb2d8dd72dde9ae29bbf4a",
+      "buildings": "f6c5dd944e5f831813980d1c69f05ed2a5b8760d4fa177e24040f0c5658391fb",
+      "school": "e86c6025a7651f81af38d302e9f392bf4da9eed21866c05867669cb417af7275",
+      "landuse": "72ccc43b08f5bc2410c91b1074af95a179e983d353cd97604d7110ed2e48cca5",
+      "boundary": "fac1fbb6b12d94ee15c608dada3fb0b525158b012c54e3e3f9ccfbcb0e063061",
+      "graph_walk": "d08d7146b89ebdb8d06f23df50b16222d310c8d4b39b288607914fd246d0a829"
+    },
+    "sources": [
+      "Кварталы — blocks.geojson пользователя (473 шт., без объединения мелких); _id — порядковый номер строки файла.",
+      "Население — building.geojson пользователя, столбец population (1135 чел.), агрегация по кварталам BlocksNet aggregate_objects.",
+      "Вместимость школ — Сервисы/school.geojson пользователя: МБОУ \"Высоцкая ООШ\", 340 мест.",
+      "Матрица времени в пути пешком — BlocksNet calculate_accessibility_matrix; собственный граф по границе набора (BlocksNet get_accessibility_graph, OpenStreetMap; 607 узлов).",
+      "Тип землепользования квартала — landuse.geojson пользователя (поле «Тип» зоны с наибольшей площадью).",
+      "Норматив и радиус — blocksnet.config.service_types_config['school']: 120 мест на 1000 жителей, 15 минут.",
+      "Слой «Сценарий» набора пользователя не используется."
+    ],
+    "log": [
+      "Кварталы: 473 (порядковый номер строки файла = _id), без объединения мелких; меньше 0,3 га: 165.",
+      "Землепользование: тип зоны определён для 470 кварталов (доля зоны ≥ 25 %).",
+      "Население: по зданиям 1135 чел., по кварталам 1135 чел.; зданий вне кварталов: 6 (население 0); населённых кварталов: 56.",
+      "Школы: 1 (МБОУ \"Высоцкая ООШ\"); вместимость 340 мест в кварталах [286].",
+      "Матрица: 473 × 473, время 0.0–213.5 мин; собственный граф по границе набора: C:\\Users\\harlekiro\\python-package-boilerplate\\school-placement\\sources\\user_vysotsk\\data\\graph_walk.pickle (607 узлов).",
+      "Расстояние от квартала до ближайшего узла графа: медиана 287 м; дальше 300 м — 234 кварталов, из них населённых 2: [(465, 1436), (470, 1282)].",
+      "Обеспеченность школами: потребность 159 мест, вместимость 340, удовлетворено 137, дефицит 22 мест, обеспеченность 0.862 (слабая 0.862), связей 40."
+    ],
+    "warnings": [
+      "Населённые кварталы [465, 470] (7 чел.) лежат дальше 300 м от пешеходного графа (собственный граф по границе набора; до 1436 м). Дороги рядом с ними в OSM не связаны с основной пешеходной сетью, а BlocksNet/iduedu оставляет только связную сеть. Время в пути считается от ближайшего узла графа без учёта подхода к нему и может быть занижено."
+    ]
+  }
+}
